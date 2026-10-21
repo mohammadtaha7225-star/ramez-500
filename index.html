@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6d4aff"><title>بازی ۵۰۰ معما</title>
+<style>
+:root{color-scheme:light;--ink:#211b39;--muted:#756d8c;--purple:#6d4aff;--pink:#ff5ba6;--line:#e9e3f6}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Tahoma,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 15% 15%,#fce7f3 0,transparent 30%),radial-gradient(circle at 85% 10%,#e0e7ff 0,transparent 34%),#f8f6ff;display:flex;align-items:center;justify-content:center;padding:18px;overflow-x:hidden}
+.wrap{width:min(100%,680px)}.top{display:flex;align-items:center;justify-content:space-between;margin:0 auto 14px;gap:10px}.brand{font-weight:900;font-size:1.05rem;display:flex;align-items:center;gap:8px}.brand .logo{width:40px;height:40px;display:grid;place-items:center;background:#fff;border-radius:14px;box-shadow:0 6px 20px #4a32831c;font-size:22px}.stats{display:flex;gap:8px}.pill{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;font-size:.84rem;font-weight:700;white-space:nowrap}
+.card{background:#ffffffed;border:1px solid #fff;border-radius:28px;padding:clamp(22px,5vw,42px);box-shadow:0 22px 65px #48317614;text-align:center;backdrop-filter:blur(8px)}.art{font-size:clamp(52px,12vw,82px);line-height:1.3;margin:5px 0 14px}.eyebrow{color:var(--purple);font-weight:800;font-size:.9rem}.card h1{font-size:clamp(1.55rem,5vw,2.25rem);line-height:1.55;margin:7px 0 12px}.desc{color:var(--muted);line-height:2;margin:0 auto 22px;max-width:460px}.btn{border:0;border-radius:16px;padding:14px 20px;font:inherit;font-weight:800;cursor:pointer;transition:transform .15s,filter .15s}.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}.primary{background:linear-gradient(135deg,var(--purple),#8c59ff);color:white;box-shadow:0 9px 22px #6d4aff33}.secondary{background:#f1edff;color:var(--purple)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.full{width:100%}.row{display:flex;gap:10px;margin-top:14px}.row .btn{flex:1}.riddle{font-size:clamp(1.2rem,4vw,1.6rem);font-weight:800;line-height:2;margin:14px 0 24px}.field{width:100%;padding:15px 16px;border:2px solid var(--line);border-radius:16px;font:inherit;text-align:center;font-size:1.1rem;outline:none;background:#fff;color:var(--ink)}.field:focus{border-color:#a99aff;box-shadow:0 0 0 4px #6d4aff12}.feedback{min-height:34px;margin:13px 0 0;font-weight:800;line-height:1.8}.good{color:#16814b}.bad{color:#cf315b}.hint{font-size:.84rem;color:var(--muted);line-height:1.8;margin-top:14px}.progress{height:9px;background:#eee9fb;border-radius:30px;overflow:hidden;margin:0 0 23px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:30px;transition:width .3s}.hidden{display:none!important}.flower{position:fixed;top:-35px;pointer-events:none;z-index:10;animation:fall 2.8s linear forwards;font-size:22px}@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.15}}.tiny{font-size:.78rem;color:#9b94ad;margin-top:18px}
+@media(max-width:420px){.top{align-items:flex-start;flex-direction:column}.stats{width:100%}.pill{flex:1;text-align:center}.card{border-radius:23px;padding:24px 18px}.row{flex-direction:column}.row .btn{width:100%}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand"><span class="logo">🧩</span> بازی ۵۰۰ معما</div><div class="stats"><div class="pill">⭐ امتیاز: <span id="score">۰</span></div><div class="pill">مرحله: <span id="stage">۱</span> / ۵۰۰</div></div></header>
+<section class="card" id="welcome"><div class="art">🧠✨</div><div class="eyebrow">آماده‌ای ذهنت رو به چالش بکشی؟</div><h1>به دنیای معماها خوش اومدی!</h1><p class="desc">جواب هر معما رو حدس بزن، امتیاز بگیر و مرحله‌به‌مرحله جلو برو. هر پاسخ درست ۱۰ امتیاز داره.</p><button class="btn primary full" id="start">ورود به بازی</button><p class="tiny">پیشرفت و امتیازت روی همین دستگاه ذخیره می‌شود.</p></section>
+<section class="card hidden" id="game"><div class="progress"><div class="bar" id="bar"></div></div><div class="eyebrow" id="stageLabel">معمای شماره ۱</div><div class="art" id="emoji">🔎</div><p class="riddle" id="question"></p><form id="answerForm"><input id="answer" class="field" autocomplete="off" placeholder="جواب معما رو اینجا بنویس" aria-label="پاسخ معما"><div class="feedback" id="feedback" aria-live="polite"></div><button class="btn primary full" id="check" type="submit">بررسی جواب</button></form><div class="row"><button class="btn secondary" id="skip">رد کردن معما</button><button class="btn secondary" id="reset">شروع دوباره</button></div><p class="hint">نکته: فاصله‌ها و تفاوت‌های کوچک نوشتاری در بررسی جواب نادیده گرفته می‌شوند.</p></section>
+<section class="card hidden" id="finished"><div class="art">🏆🎉</div><h1>آفرین! همهٔ مرحله‌ها رو تموم کردی!</h1><p class="desc">تو به پایان بازی رسیدی. می‌تونی دوباره بازی رو شروع کنی.</p><button class="btn primary full" id="again">شروع دوباره</button></section>
+</main>
+<script>
+const riddles = [
+["آن چیست که دندان دارد ولی غذا نمی‌خورد؟","شانه","🪮"],
+["آن چیست که هرچه از آن برداری بزرگ‌تر می‌شود؟","گودال","🕳️"],
+["آن چیست که پا ندارد ولی راه می‌رود؟","ساعت","⏰"],
+["آن چیست که همیشه بالا می‌رود و پایین نمی‌آید؟","سن","🎂"],
+["آن چیست که چشم دارد ولی نمی‌بیند؟","سوزن","🪡"],
+["آن چیست که گردن دارد ولی سر ندارد؟","بطری","🍾"],
+["آن چیست که کلید دارد ولی قفل باز نمی‌کند؟","پیانو","🎹"],
+["آن چیست که هرچه خشک می‌کند خودش خیس می‌شود؟","حوله","🧻"],
+["آن چیست که پر از سوراخ است ولی آب نگه می‌دارد؟","اسفنج","🧽"],
+["آن چیست که یک چشم دارد و با آن می‌دوزند؟","سوزن","🪡"],
+["آن چیست که می‌شکند اما صدایی ندارد؟","قول","🤫"],
+["آن چیست که می‌دود ولی پا ندارد؟","آب","💧"],
+["آن چیست که دست دارد ولی نمی‌تواند دست بزند؟","ساعت","🕰️"],
+["آن چیست که هر روز می‌آید ولی هیچ‌وقت نمی‌رسد؟","فردا","🌅"],
+["آن چیست که مال توست اما دیگران بیشتر از تو از آن استفاده می‌کنند؟","نام","🔤"],
+["آن چیست که هرچه بیشتر باشد کمتر می‌بینی؟","تاریکی","🌑"],
+["آن چیست که در آسمان است و در آب هم دیده می‌شود؟","ماه","🌙"],
+["آن چیست که بدون زبان حرف می‌زند؟","کتاب","📚"],
+["آن چیست که همیشه همراه توست ولی در تاریکی ناپدید می‌شود؟","سایه","👤"],
+["آن چیست که سر دارد و ته دارد ولی بدن ندارد؟","سکه","🪙"],
+["آن چیست که هرچه بیشتر بدوی به آن نمی‌رسی؟","افق","🌄"],
+["آن چیست که از شیشه رد می‌شود ولی آن را نمی‌شکند؟","نور","💡"],
+["آن چیست که هرچه بیشتر بخوری بزرگ‌تر می‌شود؟","گرسنگی","🍽️"],
+["آن چیست که بدون بال پرواز می‌کند؟","زمان","⏳"],
+["آن چیست که می‌توانی نگهش داری اما نمی‌توانی لمسش کنی؟","نفس","🌬️"],
+["آن چیست که همیشه جلو توست ولی نمی‌توانی ببینی‌اش؟","آینده","🔮"],
+["آن چیست که خانه دارد اما در آن زندگی نمی‌کند؟","حلزون","🐌"],
+["آن چیست که هرچه بیشتر از آن بنویسی کوتاه‌تر می‌شود؟","مداد","✏️"],
+["آن چیست که سفید است و با نوشتن سیاه می‌شود؟","کاغذ","📄"],
+["آن چیست که بی‌صدا می‌آید و همه‌چیز را سفید می‌کند؟","برف","❄️"],
+["آن چیست که در شب می‌درخشد و روز کم‌رنگ می‌شود؟","ستاره","⭐"],
+["آن چیست که چهار پا دارد ولی راه نمی‌رود؟","میز","🪑"],
+["آن چیست که گوش دارد ولی نمی‌شنود؟","فنجان","☕"],
+["آن چیست که زبان دارد ولی حرف نمی‌زند؟","کفش","👟"],
+["آن چیست که هرچه بیشتر بدوزی کوتاه‌تر می‌شود؟","نخ","🧵"],
+["آن چیست که دریا دارد ولی آب ندارد؟","نقشه","🗺️"],
+["آن چیست که شهر دارد ولی خانه ندارد؟","نقشه","🗺️"],
+["آن چیست که برگ دارد ولی درخت نیست؟","کتاب","📖"],
+["آن چیست که می‌چرخد اما از جایش تکان نمی‌خورد؟","پنکه","🌀"],
+["آن چیست که می‌افتد اما آسیب نمی‌بیند؟","شب","🌃"],
+["آن چیست که هرچه بیشتر بشوید کثیف‌تر می‌شود؟","آب","🚿"],
+["آن چیست که همیشه می‌خورد ولی سیر نمی‌شود؟","آتش","🔥"],
+["آن چیست که بی‌پا می‌آید و بی‌بال می‌رود؟","ابر","☁️"],
+["آن چیست که پرنده نیست اما پر دارد؟","بالش","🛏️"],
+["آن چیست که در زمستان لباس می‌پوشد و در بهار لباسش را درمی‌آورد؟","درخت","🌳"],
+["آن چیست که از کوه پایین می‌آید ولی بالا نمی‌رود؟","رودخانه","🏞️"],
+["آن چیست که هرچه بیشتر بگیری، بیشتر جا می‌ماند؟","قدم","👣"],
+["آن چیست که همه آن را می‌شنوند اما کسی آن را نمی‌بیند؟","صدا","🔊"],
+["آن چیست که نه زنده است نه مرده اما رشد می‌کند؟","مو","💇"],
+["آن چیست که درونش آب است و بیرونش مو؟","نارگیل","🥥"],
+["آن چیست که دانه دارد اما گیاه نیست؟","انار","🍎"],
+["آن چیست که هم می‌سوزاند هم روشن می‌کند؟","شمع","🕯️"],
+["آن چیست که از آسمان می‌آید و به آسمان برمی‌گردد؟","بخار","♨️"],
+["آن چیست که هر روز کوچک‌تر می‌شود تا تمام شود؟","شمع","🕯️"],
+["آن چیست که با آن می‌بینی ولی خودش چیزی نمی‌بیند؟","عینک","👓"],
+["آن چیست که یک خانه دارد و هزار پنجره؟","کندوی زنبور","🐝"],
+["آن چیست که سرش در زمین است و موهایش در هوا؟","هویج","🥕"],
+["آن چیست که هرچه بیشتر گرم شود، سردتر احساس می‌شود؟","یخ","🧊"],
+["آن چیست که هم در اول شب است و هم در آخر روز؟","حرف ش","🔠"],
+["آن چیست که یک بار در دقیقه، دو بار در لحظه و هیچ‌بار در هزار سال می‌آید؟","حرف م","🔤"],
+["آن چیست که در وسط دریا قرار دارد؟","حرف ی","🌊"],
+["آن چیست که بدون پا از پله بالا می‌رود؟","دود","💨"],
+["آن چیست که سرش را می‌برند تا حرف بزند؟","مداد","✏️"],
+["آن چیست که هرچه بیشتر باشد، وزنش کمتر می‌شود؟","سوراخ","🕳️"],
+["آن چیست که در زمستان می‌آید و در تابستان می‌رود؟","سرما","🥶"],
+["آن چیست که می‌تواند دور دنیا بچرخد و در گوشه بماند؟","تمبر","✉️"],
+["آن چیست که در روز می‌خوابد و شب بیدار است؟","جغد","🦉"],
+["آن چیست که بدون دست در را باز می‌کند؟","کلید","🗝️"],
+["آن چیست که اگر نامش را بگویی می‌شکند؟","سکوت","🤐"],
+["آن چیست که یک پا دارد و کلاه بر سر؟","قارچ","🍄"],
+["آن چیست که در آتش نمی‌سوزد و در آب غرق نمی‌شود؟","سایه","🌑"],
+["آن چیست که با آن می‌نویسی اما خودش نمی‌خواند؟","قلم","🖊️"],
+["آن چیست که هرچه بیشتر از آن کم کنی، بیشتر می‌شود؟","گودال","⛏️"],
+["آن چیست که همیشه خالی است اما می‌تواند پر شود؟","لیوان","🥛"],
+["آن چیست که از بالا می‌افتد ولی نمی‌شکند؟","باران","🌧️"],
+["آن چیست که همه‌جا هست ولی دیده نمی‌شود؟","هوا","🌬️"],
+["آن چیست که بدون دهان می‌بلعد؟","جاروبرقی","🧹"],
+["آن چیست که یک سر دارد و هزار پا؟","برس","🪥"],
+["آن چیست که از سنگ سخت‌تر است اما با آب ناپدید می‌شود؟","نمک","🧂"],
+["آن چیست که هرچه بیشتر تقسیمش کنی، بیشتر می‌شود؟","دانش","🧠"],
+["آن چیست که صبح چهار پا، ظهر دو پا و شب سه پا دارد؟","انسان","🚶"],
+["آن چیست که با آن می‌شنوی اما گوش نیست؟","تلفن","📱"],
+["آن چیست که نه در قفس است نه آزاد، اما پرواز می‌کند؟","خیال","💭"],
+["آن چیست که همیشه در حال آمدن است ولی هرگز نمی‌رسد؟","فردا","📅"],
+["آن چیست که می‌توان شکستش بدون اینکه لمسش کنی؟","رکورد","🏅"],
+["آن چیست که هرچه بیشتر از آن داشته باشی، کمتر می‌ترسی؟","دانش","📘"],
+["آن چیست که با یک فوت خاموش می‌شود؟","شمع","🕯️"],
+["آن چیست که می‌خندد اما دهان ندارد؟","گل","🌼"],
+["آن چیست که روی آب می‌ماند و سنگ نیست؟","چوب","🪵"],
+["آن چیست که می‌تازد اما اسب نیست؟","موج","🌊"],
+["آن چیست که پر از حرف است اما سخن نمی‌گوید؟","فرهنگ لغت","📕"],
+["آن چیست که هرچه بیشتر بخوانی، بیشتر می‌دانی؟","کتاب","📚"],
+["آن چیست که همیشه راه را نشان می‌دهد اما خودش راه نمی‌رود؟","تابلو","🚸"],
+["آن چیست که به همه نور می‌دهد و خودش آرام‌آرام آب می‌شود؟","شمع","🕯️"],
+["آن چیست که بدون ریشه رشد می‌کند؟","مو","💇"],
+["آن چیست که اگر وارونه‌اش کنی بزرگ‌تر می‌شود؟","عدد شش","۶️⃣"],
+["آن چیست که می‌تواند پر شود ولی وزن ندارد؟","بادکنک","🎈"],
+["آن چیست که در جیب جا می‌شود و دنیا را نشان می‌دهد؟","موبایل","📱"],
+["آن چیست که در هر خانه هست و همه از آن استفاده می‌کنند؟","در","🚪"],
+["آن چیست که هم می‌تواند باز باشد هم بسته، اما در نیست؟","چشم","👁️"],
+["آن چیست که بدون پا می‌دود و بدون چشم می‌گرید؟","ابر","🌧️"],
+["آن چیست که با آن غذا می‌خوری اما خودش غذا نمی‌خورد؟","قاشق","🥄"],
+["آن چیست که روی دیوار است و زمان را نشان می‌دهد؟","ساعت","🕒"],
+["آن چیست که از دانه شروع می‌شود و سایه می‌دهد؟","درخت","🌱"],
+["آن چیست که در زمستان گرم و در تابستان خنک می‌کند؟","خانه","🏠"]
+];
+const faNum=n=>String(n).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+const norm=s=>String(s||"").toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/[ي]/g,"ی").replace(/[ك]/g,"ک").replace(/[ۀة]/g,"ه").replace(/[أإآ]/g,"ا").replace(/[\s‌ـ\-،,.!?؟:؛'"]/g,"").trim();
+const stageEl=document.getElementById("stage"),scoreEl=document.getElementById("score"),bar=document.getElementById("bar"),welcome=document.getElementById("welcome"),game=document.getElementById("game"),finished=document.getElementById("finished"),answer=document.getElementById("answer"),feedback=document.getElementById("feedback");
+let state={stage:1,score:0,solved:[]};try{state={...state,...JSON.parse(localStorage.getItem("ramez500-save")||"{}")}}catch{}
+const getPuzzle=i=>riddles[(i-1)%riddles.length];
+function save(){localStorage.setItem("ramez500-save",JSON.stringify(state));scoreEl.textContent=faNum(state.score);stageEl.textContent=faNum(Math.min(state.stage,500))}
+function show(which){welcome.classList.toggle("hidden",which!=="welcome");game.classList.toggle("hidden",which!=="game");finished.classList.toggle("hidden",which!=="finished")}
+function render(){if(state.stage>500){show("finished");save();return}show("game");const [q,a,e]=getPuzzle(state.stage);document.getElementById("question").textContent=q;document.getElementById("emoji").textContent=e;document.getElementById("stageLabel").textContent="معمای شمارهٔ "+faNum(state.stage);bar.style.width=((state.stage-1)/500*100)+"%";answer.value="";answer.disabled=false;document.getElementById("check").disabled=false;feedback.textContent="";feedback.className="feedback";save();answer.focus()}
+function playTone(freq,duration=0.14){try{const ctx=new (window.AudioContext||window.webkitAudioContext)(),o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=freq;o.type="sine";g.gain.setValueAtTime(.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+duration);o.onended=()=>ctx.close()}catch{}}
+function flowers(){const emojis=["🌸","🌼","🌺","✨","🌷"];for(let i=0;i<20;i++){const f=document.createElement("span");f.className="flower";f.textContent=emojis[Math.floor(Math.random()*emojis.length)];f.style.left=Math.random()*100+"vw";f.style.animationDelay=Math.random()*.9+"s";document.body.appendChild(f);setTimeout(()=>f.remove(),4000)}}
+function distance(a,b){if(Math.abs(a.length-b.length)>1)return 2;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(cur[j-1]+1,prev[j]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur}return prev[b.length]}
+document.getElementById("start").onclick=()=>render();
+document.getElementById("answerForm").onsubmit=e=>{e.preventDefault();if(answer.disabled)return;const user=norm(answer.value),expected=norm(getPuzzle(state.stage)[1]);if(!user){feedback.textContent="اول جواب رو بنویس 🙂";feedback.className="feedback bad";return}if(user===expected||distance(user,expected)===1){state.score+=10;state.solved.push(state.stage);state.stage++;save();feedback.textContent="آفرین! جواب درست بود؛ ۱۰ امتیاز گرفتی! 🎉";feedback.className="feedback good";answer.disabled=true;document.getElementById("check").disabled=true;playTone(740,.12);setTimeout(()=>playTone(990,.18),130);flowers();setTimeout(render,1100)}else{feedback.textContent="هنوز درست نیست؛ دوباره فکر کن و امتحان کن 💜";feedback.className="feedback bad";playTone(180,.18)}};
+document.getElementById("skip").onclick=()=>{state.stage=Math.min(501,state.stage+1);render()};
+document.getElementById("reset").onclick=()=>{if(confirm("مطمئنی می‌خواهی امتیاز و مرحله را از اول شروع کنی؟")){state={stage:1,score:0,solved:[]};save();show("welcome")}};
+document.getElementById("again").onclick=()=>{state={stage:1,score:0,solved:[]};save();render()};
+save();if(state.stage>1)show("welcome");
+</script></body></html>
